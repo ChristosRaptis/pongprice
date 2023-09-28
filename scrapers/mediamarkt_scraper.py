@@ -108,35 +108,40 @@ async def get_data(url: str) -> list:
     product_list = []
     current_url = url
     page_count = 0
-    max_pages = 1000
-    with tqdm() as pbar:
-        while page_count <= max_pages:
-            print(f"Scraping page {page_count + 1}: {current_url}")
-            response = httpx.get(current_url, timeout=60.0)
-            soup = bs(response.content, "html.parser")
-            divs = soup.find_all(
-                "div", attrs={"class": "sc-3bd4ad78-0 bGOTBX sc-5bb8ec6d-1 kHWTsV"}
-            )
-            for div in divs:
-                product = {}
-                a_tag = div.find("a")
-                try:
-                    product["product_url"] = base_url + a_tag["href"]
-                except:
-                    product["product_url"] = "url not available"
-                product["product_name"] = a_tag.text
-                price_div = div.find("div", attrs={"class": "sc-3bd4ad78-0 kQSbne"})
-                product["product_price"] = price_div.find("span").text
-                product_list.append(product)
-            print(len(product_list))
-            if (
-                soup.find("button", attrs={"data-test": "mms-search-srp-loadmore"})
-                == None
-            ):
-                break
-            page_count += 1
-            current_url = url + f"?page={page_count + 1}"
-            pbar.update(1)
+    max_pages = 2
+    async with httpx.AsyncClient() as client:
+        with tqdm() as pbar:
+            while page_count <= max_pages:
+                print(f"Scraping page {page_count + 1}: {current_url}")
+                response = await client.get(current_url, timeout=60.0)
+                soup = bs(response.content, "html.parser")
+                divs = soup.find_all(
+                    "div", attrs={"class": "sc-57bbc469-0 hhSaVb sc-5bb8ec6d-3 YFARY sc-b0d9c874-1 bRUDYz"}
+                )
+                for div in divs:
+                    product = {}
+                    a_tag = div.find("a", attrs={"class": "sc-db43135e-1 gpEOUZ sc-b0d9c874-0 gJSJVL"})
+                    try:
+                        product["product_url"] = base_url + a_tag["href"]
+                    except:
+                        product["product_url"] = "url not available"
+                    product["product_name"] = a_tag.text
+                    price_div = div.find("div", attrs={"class": "sc-3bd4ad78-0 kQSbne"})
+                    product["product_price"] = price_div.find("span").text
+                    product_list.append(product)
+                print(len(product_list))
+                if (
+                    soup.find(
+                        "button",
+                        attrs={"class": "sc-21f2092b-1 eTQftF sc-2469269c-1 eeiKDF"},
+                    )
+                    == None
+                ):
+                    break
+                page_count += 1
+                current_url = url + f"?page={page_count + 1}"
+                pbar.update(1)
+                await asyncio.sleep(1)  # Wait for 1 second between page requests
     return product_list
 
 
@@ -150,16 +155,21 @@ async def get_main_links(url: str) -> list:
                                         div.sc-490debc5-0.jhMMyN > div.sc-835d3f28-0.kTdeVZ > aside > div:nth-child(1) > aside > div > button"
         )
         await page.goto(url)
-        await consent_button.click()
+        try:
+            await consent_button.click(timeout=5000)
+        except:
+            pass
         # print("Consent button clicked")
-        await categories_button.click()
+        try:
+            await categories_button.click(timeout=5000)
+        except:
+            pass
         # print("categories button clicked")
         html = await page.content()
         soup = bs(html, "html.parser")
-        aside_tag = soup.find("aside", attrs={"class": "sc-2d009fd-0 dBWZMt"})
-        ul_tag = aside_tag.find_next("ul")
-        a_tags = ul_tag.find_all("a")
-        links = [a["href"] for a in a_tags]
+        li_tags = soup.find_all("li", attrs={"class": "sc-f741f313-2 kTVmzt"})
+        a_tags = [li.find("a") for li in li_tags]
+        links = [base_url + a["href"] for a in a_tags]
         await browser.close()
 <<<<<<< HEAD
 >>>>>>> 437a1b2 (progress)
