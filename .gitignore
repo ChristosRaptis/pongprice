@@ -1,5 +1,8 @@
 test.ipynb
+<<<<<<< HEAD
 config.py
+=======
+>>>>>>> 92bafc1 (update week2)
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
