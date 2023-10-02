@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import json
 from bs4 import BeautifulSoup as bs
 import httpx
@@ -89,6 +90,8 @@ from urllib import response
 from playwright.async_api import async_playwright
 =======
 
+=======
+>>>>>>> 018c728 (connected to postgresql database)
 import json
 >>>>>>> e9c6e4d (working)
 from bs4 import BeautifulSoup as bs
@@ -108,33 +111,40 @@ def get_data(url: str) -> list:
         while page_count <= max_pages:
             print("-" * 100)
             print(f"Scraping page {page_count + 1}: {current_url}")
-            response =  httpx.get(current_url, timeout=90.0)
+            response = httpx.get(current_url, timeout=90.0)
             soup = bs(response.content, "html.parser")
             divs = soup.find_all(
-                "div", attrs={"class": "sc-57bbc469-0 hhSaVb sc-5bb8ec6d-3 YFARY sc-b0d9c874-1 bRUDYz"}
+                "div",
+                attrs={
+                    "class": "sc-57bbc469-0 hhSaVb sc-5bb8ec6d-3 YFARY sc-b0d9c874-1 bRUDYz"
+                },
             )
             for div in divs:
                 product = {}
-                a_tag = div.find("a", attrs={"class": "sc-db43135e-1 gpEOUZ sc-b0d9c874-0 gJSJVL"})
+                a_tag = div.find(
+                    "a", attrs={"class": "sc-db43135e-1 gpEOUZ sc-b0d9c874-0 gJSJVL"}
+                )
                 try:
                     product["product_url"] = base_url + a_tag["href"]
                 except:
-                    product["product_url"] = "url not available"
-                print(product["product_url"])    
+                    product["product_url"] = current_url
+                print(product["product_url"])
                 try:
                     product["product_name"] = a_tag.text
-                except AttributeError :
-                        try:
-                            product["product_name"] = a_tag.find("p").text    
-                        except AttributeError :
-                            product["product_name"] = "name not available"
+                except AttributeError:
+                    try:
+                        product["product_name"] = a_tag.find("p").text
+                    except AttributeError:
+                        product["product_name"] = "name not available"
                 price_div = div.find("div", attrs={"class": "sc-3bd4ad78-0 kQSbne"})
                 try:
                     product["product_price"] = price_div.find("span").text.strip()
-                except AttributeError :
-                    product["product_price"] = "price not available"    
+                except AttributeError:
+                    product["product_price"] = "price not available"
                 product_list.append(product)
-            if not soup.find("button", class_="sc-21f2092b-1 eTQftF sc-2469269c-1 eeiKDF"):
+            if not soup.find(
+                "button", class_="sc-21f2092b-1 eTQftF sc-2469269c-1 eeiKDF"
+            ):
                 break
             page_count += 1
             current_url = url + f"?page={page_count + 1}"
@@ -142,6 +152,7 @@ def get_data(url: str) -> list:
     return product_list
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 async def get_main_links(url: str) -> list:
     async with async_playwright() as p:
@@ -177,6 +188,8 @@ async def get_main_links(url: str) -> list:
 >>>>>>> e9c6e4d (working)
 
 
+=======
+>>>>>>> 018c728 (connected to postgresql database)
 def main():
     start_time = time.perf_counter()
     final_list = []
@@ -189,11 +202,15 @@ def main():
         print(f"{len(final_list)} products scraped.")
         print("-" * 100)
     with open("products.json", "w") as f:
-        json.dump(final_list, f, indent=4)    
+        json.dump(final_list, f, indent=4)
     end_time = time.perf_counter()
     elapsed_time = end_time - start_time
+<<<<<<< HEAD
     print(f"Scraping completed in {elapsed_time:.2f} seconds.")
 >>>>>>> 9fc7d17 (up and running, probably)
+=======
+    print(f"Scraping completed in {elapsed_time/60:.2f} minutes.")
+>>>>>>> 018c728 (connected to postgresql database)
 
 
 if __name__ == "__main__":
