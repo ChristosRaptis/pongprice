@@ -1,0 +1,7 @@
+{% for result in results %}
+<tr>
+    <td>{{ result.product_name }}</td>
+    <td>{{ result.product_price }}</td>
+    <td><a href="{{ result.url }}">{{ result.url }}</a></td>
+</tr>
+{% endfor %}

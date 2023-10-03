@@ -54,7 +54,7 @@ async def main():
     phone_links = await get_main_links(phone_url)
     all_categories_links = multimedia_links + phone_links
     print(len(all_categories_links))
-    with open("categories_links.json", "w") as f:
+    with open("data/categories_links.json", "w") as f:
         json.dump(all_categories_links, f)
     
 
