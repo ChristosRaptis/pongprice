@@ -2,10 +2,23 @@ from sqlalchemy import func
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask import Flask, request, render_template, Blueprint
 from flask_sqlalchemy import SQLAlchemy
+<<<<<<< HEAD
 
 
 db = SQLAlchemy()
 
+=======
+
+db = SQLAlchemy()
+
+
+class Product(db.Model):
+    __tablename__ = "products"
+    url = db.Column(db.String(255), primary_key=True)
+    product_name = db.Column(db.String(255))
+    product_price = db.Column(db.String(255))
+
+>>>>>>> 7ba69f6 (attempting to scrape Krefel)
 
 def create_app():
     app = Flask(__name__)
@@ -49,3 +62,20 @@ class Product(db.Model):
 @main.route("/")
 def index():
     return render_template("index.html")
+<<<<<<< HEAD
+=======
+
+
+@main.route("/search")
+def search():
+    q = request.args.get("q")
+    print(q)
+
+    if q:
+        
+        results = Product.query.filter(Product.product_name.match(q)).all()
+    else:
+        results = []
+
+    return render_template("search_results.html", results=results)
+>>>>>>> 7ba69f6 (attempting to scrape Krefel)
