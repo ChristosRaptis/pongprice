@@ -1,20 +1,21 @@
 import psycopg2
 import pandas as pd
+from config import DATABASE_CONFIG
 
 conn = psycopg2.connect(
-    host="localhost",
-    port="5432",
-    user="",
-    password="",
+    host=DATABASE_CONFIG["host"],
+    port=DATABASE_CONFIG["port"],
+    user=DATABASE_CONFIG["user"],
+    password=DATABASE_CONFIG["password"],
 )
 
 cur = conn.cursor()
 
-# cur.execute(
-#     "CREATE TABLE products (url VARCHAR(255), product_name VARCHAR(255), product_price VARCHAR(255));"
-# )
+cur.execute(
+    "CREATE TABLE products (url VARCHAR(255), product_name VARCHAR(255), product_price VARCHAR(255));"
+)
 
-data = pd.read_csv("df_products_vandeborre_V5.csv")
+data = pd.read_csv("df_products_vandeborre.csv")
 data = data.drop("Unnamed: 0", axis=1)
 data = list(data.itertuples(index=False))
 
