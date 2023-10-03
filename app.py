@@ -1,8 +1,8 @@
 from flask import Flask, request, render_template, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-import psycopg2
 
 db = SQLAlchemy()
+
 
 class Product(db.Model):
     __tablename__ = "products"
@@ -37,7 +37,7 @@ def search():
 
     if q:
         
-        results = Product.query.filter(Product.product_name.icontains(q)).all()
+        results = Product.query.filter(Product.product_name.match(q)).all()
     else:
         results = []
 
