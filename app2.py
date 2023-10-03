@@ -6,22 +6,22 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 def create_app():
     app = Flask(__name__)
     app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "postgresql://postgres:1234@127.0.0.1/postgres"
-    
+    ] = "postgresql://postgres:7530@127.0.0.1/postgres"
     db.init_app(app)
-
     app.register_blueprint(main)
-
     return app
+
 
 main = Blueprint("main", __name__)
 
 # define TSVECTOR type
-TSVECTOR = db.Text().with_variant(db.Text(), 'postgresql')
+TSVECTOR = db.Text().with_variant(db.Text(), "postgresql")
+
 
 class Product(db.Model):
     __tablename__ = "products"
@@ -35,29 +35,17 @@ class Product(db.Model):
     # Define a hybrid property to generate the tsvector
     @hybrid_property
     def product_name_tsvector_expression(self):
-        return func.to_tsvector('english', self.product_name)
+        return func.to_tsvector("english", self.product_name)
 
     # Define a query expression to search the tsvector
     @classmethod
+    @main.route("/search")
     def search(cls, query):
-        search_vector = func.to_tsquery('english', query)
-        return cls.query.filter(cls.product_name_tsvector.match(search_vector)).all()
-    
+        search_vector = func.to_tsquery("english", query)
+        results = cls.query.filter(cls.product_name_tsvector.match(search_vector)).all()
+        return render_template("search_results.html", results=results)
+
 
 @main.route("/")
 def index():
     return render_template("index.html")
-
-
-@main.route("/search")
-def search():
-    q = request.args.get("q")
-    print(q)
-
-    if q:
-        
-        results = Product.query.filter(Product.product_name.icontains(q)).all()
-    else:
-        results = []
-
-    return render_template("search_results.html", results=results)

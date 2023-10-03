@@ -12,15 +12,8 @@ from selenium.common.exceptions import (
 import pandas as pd
 import time
 
-beggining = time.perf_counter()
 
-with open("list_urls_multim_teleph.json", "r") as file:
-    list_urls_multim_teleph = json.load(file)
-
-driver = webdriver.Chrome()
-product_info_list = []
-
-for url in list_urls_multim_teleph:
+def scrape(url, product_info_list, driver):
     page_source = driver.get(url)
     page_source
     time.sleep(5)
@@ -32,7 +25,6 @@ for url in list_urls_multim_teleph:
         if button_cookies.is_displayed():
             button_cookies.click()
             time.sleep(5)
-
     except NoSuchElementException:
         pass
 
@@ -47,10 +39,8 @@ for url in list_urls_multim_teleph:
             )
         )
         button_more_products.click()
-
         time.sleep(5)
 
-        # Click the "Show All Products" option
         button_all_products = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located(
                 (
@@ -60,30 +50,19 @@ for url in list_urls_multim_teleph:
             )
         )
         button_all_products.click()
-
-        expected_number_of_products = 25
-        WebDriverWait(driver, 20).until(
-            lambda driver: len(
-                driver.find_elements(
-                    By.CSS_SELECTOR,
-                    "div.col-md-4.col-sm-4.col-xs-12.js-product-container.product-container.js-gtm-product-container.margin-top-10-md.margin-btm-10-md",
-                )
-            )
-            >= expected_number_of_products
-        )
-
+        time.sleep(15)
     except ElementNotInteractableException:
-        # Handle the case where the buttons are not interactable or don't exist
         print(f"Buttons not found or not interactable on URL: {url}")
 
     page_source = driver.page_source
-
     soup = BeautifulSoup(page_source, "html.parser")
 
     paragraphs = soup.find_all(
         "div",
         class_="col-md-4 col-sm-4 col-xs-12 js-product-container product-container js-gtm-product-container margin-top-10-md margin-btm-10-md",
     )
+
+    product_info_per_url = []  # Store product info for this URL
 
     for paragraph in paragraphs:
         product_info = {}
@@ -105,13 +84,30 @@ for url in list_urls_multim_teleph:
                 "span", class_="current"
             ).text.strip()
 
-        product_info_list.append(product_info)
+        product_info_per_url.append(product_info)
 
-df_products_vandeborre = pd.DataFrame(product_info_list)
-df_products_vandeborre.to_csv("df_products_vandeborre_V6.csv")
+    product_info_list.extend(
+        product_info_per_url
+    )  # Extend the list with data for this URL
 
-driver.quit()
 
-end = time.perf_counter()
+def main():
+    web_driver = webdriver.Chrome()
 
-print(f"Got the products in {end - beggining:0.4f} seconds")
+    with open("list_urls_multim_teleph.json", "r") as file:
+        list_urls_multim_teleph = json.load(file)
+        print(list_urls_multim_teleph)
+
+    product_info_list = []  # List to store all scraped data
+
+    for url in list_urls_multim_teleph:
+        scrape(url, product_info_list, web_driver)
+
+    df_products_vandeborre = pd.DataFrame(product_info_list)
+    df_products_vandeborre.to_csv("df_products_vandeborre_all_urls_V2.csv")
+
+    web_driver.quit()
+
+
+if __name__ == "__main__":
+    main()
