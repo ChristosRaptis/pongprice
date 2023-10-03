@@ -3,6 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from flask import Flask, request, render_template, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 db = SQLAlchemy()
 
@@ -14,11 +15,28 @@ class Product(db.Model):
     product_price = db.Column(db.String(255))
 
 =======
+=======
+>>>>>>> 715254c (attempting to scrape Krefel)
 
 
 db = SQLAlchemy()
 
+<<<<<<< HEAD
 >>>>>>> 385f7e9 (update for flask)
+=======
+=======
+
+db = SQLAlchemy()
+
+
+class Product(db.Model):
+    __tablename__ = "products"
+    url = db.Column(db.String(255), primary_key=True)
+    product_name = db.Column(db.String(255))
+    product_price = db.Column(db.String(255))
+
+>>>>>>> 7ba69f6 (attempting to scrape Krefel)
+>>>>>>> 715254c (attempting to scrape Krefel)
 
 def create_app():
     app = Flask(__name__)
@@ -70,6 +88,10 @@ class Product(db.Model):
 def index():
     return render_template("index.html")
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 715254c (attempting to scrape Krefel)
 
 
 @main.route("/search")
@@ -78,14 +100,23 @@ def search():
     print(q)
 
     if q:
+<<<<<<< HEAD
         results = (
             Product.query.filter(Product.product_name.match(q))
             .order_by(Product.product_price.asc())
             .all()
         )
+=======
+        
+        results = Product.query.filter(Product.product_name.match(q)).all()
+>>>>>>> 715254c (attempting to scrape Krefel)
     else:
         results = []
 
     return render_template("search_results.html", results=results)
+<<<<<<< HEAD
 =======
 >>>>>>> 385f7e9 (update for flask)
+=======
+>>>>>>> 7ba69f6 (attempting to scrape Krefel)
+>>>>>>> 715254c (attempting to scrape Krefel)
