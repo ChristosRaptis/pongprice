@@ -1,5 +1,8 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9e9b930 (renamed file)
 import json
 import requests
 from bs4 import BeautifulSoup as bs
@@ -9,11 +12,25 @@ import time
 from tqdm import tqdm
 
 
+<<<<<<< HEAD
+=======
+
+with open(
+    "/home/chris/Becode/Projects/pongprice/data/krefel_product_urls.json", "r"
+) as infile:
+    product_urls = json.load(infile)
+
+partial_urls = product_urls[:500]
+
+
+
+>>>>>>> 9e9b930 (renamed file)
 def get_headers():
     user_agent = fake_useragent.UserAgent().random
     headers = {"User-Agent": user_agent}
     return headers
 
+<<<<<<< HEAD
 product_sitemaps = [
     f"https://media.krefel.be/sys-master/sitemap/product-fr-{n}.xml"
     for n in range(0, 20)
@@ -48,6 +65,20 @@ def get_product_data(product_url):
     product_data["url"] = product_url
     script = soup.find("script", type="application/json")
 
+=======
+
+headers = get_headers()
+
+
+def get_product_data(product_url):
+    response = requests.get(product_url, headers= headers, timeout=30)
+    print(f"Scraping {product_url}")
+    product_data = {}
+    soup = bs(response.text, "html.parser")
+    product_data["url"] = product_url
+    script = soup.find("script", type="application/json")
+   
+>>>>>>> 9e9b930 (renamed file)
     dict = json.loads(script.string)
     try:
         data = dict["props"]["pageProps"]["dehydratedState"]["queries"][0][
@@ -56,14 +87,22 @@ def get_product_data(product_url):
         product_data["product_name"] = data["manufacturer"] + " " + data["name"]
         product_data["product_price"] = data["price"]["formattedValue"]
     except:
+<<<<<<< HEAD
         print("error getting data")
         product_data["product_name"] = "N/A"
         product_data["product_price"] = "N/A"
 
+=======
+        print("Error")
+        product_data["product_name"] = "N/A"
+        product_data["product_price"] = "N/A"    
+    
+>>>>>>> 9e9b930 (renamed file)
     return product_data
 
 def main():
     start_time = time.perf_counter()
+<<<<<<< HEAD
     product_urls = [get_product_urls(sitemap) for sitemap in product_sitemaps]
     product_urls = [
         url for sublist in product_urls for url in sublist
@@ -73,6 +112,13 @@ def main():
     # with open("data/krefel_product_data.json", "w") as outfile:
     #     json.dump(product_list, outfile, indent=4)
     print(f"Scraped {len(product_list)} products ")   
+=======
+
+    with ThreadPoolExecutor(max_workers=100) as executor:
+        product_list = list(tqdm(executor.map(get_product_data, partial_urls), total=len(partial_urls), desc="Scraping Krefel"))
+    with open("data/krefel_product_data.json", "w") as outfile:
+        json.dump(product_list, outfile, indent=4)
+>>>>>>> 9e9b930 (renamed file)
     end_time = time.perf_counter()
     print(f"Finished in {round((end_time - start_time)/60, 2)} minutes")
 
@@ -84,6 +130,7 @@ if __name__ == "__main__":
 
 
 
+<<<<<<< HEAD
 =======
 import re
 from urllib import response
@@ -182,3 +229,5 @@ if __name__ == "__main__":
 >>>>>>> 715254c (attempting to scrape Krefel)
 =======
 >>>>>>> 6cce8ab (stil lworking on krefel)
+=======
+>>>>>>> 9e9b930 (renamed file)
