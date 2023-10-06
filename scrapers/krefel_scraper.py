@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 with open(
@@ -25,6 +26,8 @@ with open(
 
 
 >>>>>>> 9e9b930 (renamed file)
+=======
+>>>>>>> cf31d7d (integrated url scraping in krefel_scraping.py)
 def get_headers():
     user_agent = fake_useragent.UserAgent().random
     headers = {"User-Agent": user_agent}
@@ -32,6 +35,9 @@ def get_headers():
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cf31d7d (integrated url scraping in krefel_scraping.py)
 product_sitemaps = [
     f"https://media.krefel.be/sys-master/sitemap/product-fr-{n}.xml"
     for n in range(0, 20)
@@ -131,10 +137,14 @@ def get_product_data(product_url):
 def main():
     start_time = time.perf_counter()
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> cf31d7d (integrated url scraping in krefel_scraping.py)
     product_urls = [get_product_urls(sitemap) for sitemap in product_sitemaps]
     product_urls = [
         url for sublist in product_urls for url in sublist
     ]
+<<<<<<< HEAD
     with ThreadPoolExecutor(max_workers=3) as executor:
         product_list = list(tqdm(executor.map(get_product_data, product_urls[:10]), total=len(product_urls), desc="Scraping Krefel"))
     # with open("data/krefel_product_data.json", "w") as outfile:
@@ -151,6 +161,13 @@ def main():
 =======
     print(f"Scraped {len(product_list)} products ")    
 >>>>>>> df17eef (finished scraping krefel)
+=======
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        product_list = list(tqdm(executor.map(get_product_data, product_urls[:10]), total=len(product_urls), desc="Scraping Krefel"))
+    # with open("data/krefel_product_data.json", "w") as outfile:
+    #     json.dump(product_list, outfile, indent=4)
+    print(f"Scraped {len(product_list)} products ")   
+>>>>>>> cf31d7d (integrated url scraping in krefel_scraping.py)
     end_time = time.perf_counter()
     print(f"Finished in {round((end_time - start_time)/60, 2)} minutes")
 
