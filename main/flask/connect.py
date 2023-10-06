@@ -1,6 +1,6 @@
 import psycopg2
 import pandas as pd
-from config import DATABASE_CONFIG
+from main.flask.config import DATABASE_CONFIG
 
 conn = psycopg2.connect(
     host=DATABASE_CONFIG["host"],
