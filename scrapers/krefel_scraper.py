@@ -16,11 +16,11 @@ from tqdm import tqdm
 =======
 
 with open(
-    "/home/chris/Becode/Projects/pongprice/data/krefel_product_urls.json", "r"
+    "/Users/chris/Becode/Projects/pongprice/data/krefel_product_urls.json", "r"
 ) as infile:
     product_urls = json.load(infile)
 
-partial_urls = product_urls[:500]
+
 
 
 
@@ -30,6 +30,7 @@ def get_headers():
     headers = {"User-Agent": user_agent}
     return headers
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 product_sitemaps = [
     f"https://media.krefel.be/sys-master/sitemap/product-fr-{n}.xml"
@@ -70,15 +71,35 @@ def get_product_data(product_url):
 headers = get_headers()
 
 
+=======
+>>>>>>> df17eef (finished scraping krefel)
 def get_product_data(product_url):
-    response = requests.get(product_url, headers= headers, timeout=30)
     print(f"Scraping {product_url}")
+    headers = get_headers()
+    try:
+        response = requests.get(product_url, headers=headers, timeout=60)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred: {e}")
+        print(f"Retrying {product_url}")
+        return {}
+
     product_data = {}
-    soup = bs(response.text, "html.parser")
+    try:
+        soup = bs(response.text, "html.parser")
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        print(f"Retrying {product_url}")
+        return {}
+
     product_data["url"] = product_url
     script = soup.find("script", type="application/json")
+<<<<<<< HEAD
    
 >>>>>>> 9e9b930 (renamed file)
+=======
+
+>>>>>>> df17eef (finished scraping krefel)
     dict = json.loads(script.string)
     try:
         data = dict["props"]["pageProps"]["dehydratedState"]["queries"][0][
@@ -87,6 +108,7 @@ def get_product_data(product_url):
         product_data["product_name"] = data["manufacturer"] + " " + data["name"]
         product_data["product_price"] = data["price"]["formattedValue"]
     except:
+<<<<<<< HEAD
 <<<<<<< HEAD
         print("error getting data")
         product_data["product_name"] = "N/A"
@@ -98,6 +120,12 @@ def get_product_data(product_url):
         product_data["product_price"] = "N/A"    
     
 >>>>>>> 9e9b930 (renamed file)
+=======
+        print("error getting data")
+        product_data["product_name"] = "N/A"
+        product_data["product_price"] = "N/A"
+
+>>>>>>> df17eef (finished scraping krefel)
     return product_data
 
 def main():
@@ -114,11 +142,15 @@ def main():
     print(f"Scraped {len(product_list)} products ")   
 =======
 
-    with ThreadPoolExecutor(max_workers=100) as executor:
-        product_list = list(tqdm(executor.map(get_product_data, partial_urls), total=len(partial_urls), desc="Scraping Krefel"))
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        product_list = list(tqdm(executor.map(get_product_data, product_urls), total=len(product_urls), desc="Scraping Krefel"))
     with open("data/krefel_product_data.json", "w") as outfile:
         json.dump(product_list, outfile, indent=4)
+<<<<<<< HEAD
 >>>>>>> 9e9b930 (renamed file)
+=======
+    print(f"Scraped {len(product_list)} products ")    
+>>>>>>> df17eef (finished scraping krefel)
     end_time = time.perf_counter()
     print(f"Finished in {round((end_time - start_time)/60, 2)} minutes")
 
