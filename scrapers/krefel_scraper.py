@@ -7,20 +7,22 @@ import time
 from tqdm import tqdm
 
 
-
-with open(
-    "/Users/chris/Becode/Projects/pongprice/data/krefel_product_urls.json", "r"
-) as infile:
-    product_urls = json.load(infile)
-
-
-
-
-
 def get_headers():
     user_agent = fake_useragent.UserAgent().random
     headers = {"User-Agent": user_agent}
     return headers
+
+product_sitemaps = [
+    f"https://media.krefel.be/sys-master/sitemap/product-fr-{n}.xml"
+    for n in range(0, 20)
+]
+
+def get_product_urls(sitemap_url):
+    headers= get_headers()
+    response = requests.get(sitemap_url, headers=headers)
+    soup = bs(response.text, "xml")
+    urls = [url.text for url in soup.find_all("loc")]
+    return urls
 
 def get_product_data(product_url):
     print(f"Scraping {product_url}")
@@ -60,12 +62,15 @@ def get_product_data(product_url):
 
 def main():
     start_time = time.perf_counter()
-
+    product_urls = [get_product_urls(sitemap) for sitemap in product_sitemaps]
+    product_urls = [
+        url for sublist in product_urls for url in sublist
+    ]
     with ThreadPoolExecutor(max_workers=3) as executor:
-        product_list = list(tqdm(executor.map(get_product_data, product_urls), total=len(product_urls), desc="Scraping Krefel"))
-    with open("data/krefel_product_data.json", "w") as outfile:
-        json.dump(product_list, outfile, indent=4)
-    print(f"Scraped {len(product_list)} products ")    
+        product_list = list(tqdm(executor.map(get_product_data, product_urls[:10]), total=len(product_urls), desc="Scraping Krefel"))
+    # with open("data/krefel_product_data.json", "w") as outfile:
+    #     json.dump(product_list, outfile, indent=4)
+    print(f"Scraped {len(product_list)} products ")   
     end_time = time.perf_counter()
     print(f"Finished in {round((end_time - start_time)/60, 2)} minutes")
 
