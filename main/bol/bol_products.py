@@ -94,6 +94,22 @@ for url in list_urls_bol:
             next_button.click()
             time.sleep(5)
 
+<<<<<<< HEAD
+=======
+# while next_button:
+#     next_button = WebDriverWait(driver, 10).until(
+#         EC.presence_of_element_located(
+#             (
+#                 By.CLASS_NAME,
+#                 "#js_pagination_control > ul > li.\[.pagination__controls.pagination__controls--next.\].js_pagination_item > a",
+#             )
+#         )
+#     )
+#     next_button.click()
+#     element = WebDriverWait(driver, 10).until(
+#         EC.presence_of_element_located((By.CLASS_NAME, "js_items_content"))
+#     )
+>>>>>>> 22d5eec (reordering folders)
 
 df_products_vandeborre = pd.DataFrame(product_info_list)
 df_products_vandeborre.to_csv("df_products_bol.csv")
