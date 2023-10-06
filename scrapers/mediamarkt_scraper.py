@@ -1,13 +1,54 @@
 import json
 from bs4 import BeautifulSoup as bs
+from playwright.async_api import async_playwright
 import httpx
 from tqdm import tqdm
 import time
+import asyncio
 
 base_url = "https://www.mediamarkt.be"
 
+multimedia_url = (
+    "https://www.mediamarkt.be/fr/category/_ordinateur-multim%C3%A9dia-452669.html"
+)
 
-import asyncio
+phone_url = (
+    "https://www.mediamarkt.be/fr/category/_t%C3%A9l%C3%A9phone-navigation-509451.html"
+)
+
+async def get_main_links(url: str) -> list:
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_page()
+        consent_button = page.locator("#pwa-consent-layer-accept-all-button")
+        categories_button = page.locator(
+            "#acc-content-id-facet-Catégorie > ul > div > button"
+        )
+        await page.goto(url)
+        try:
+            await consent_button.click(timeout=5000)
+        except:
+            pass
+        # print("Consent button clicked")
+        try:
+            await categories_button.click(timeout=5000)
+        except:
+            pass
+        # print("categories button clicked")
+        html = await page.content()
+        soup = bs(html, "html.parser")
+        li_tags = soup.find_all("li", attrs={"class": "sc-f741f313-2 kTVmzt"})
+        categories = [li.find("a") for li in li_tags]
+        category_links = []
+        for category in tqdm(categories):
+            first_url = base_url + category["href"]
+            print(first_url)
+            response = await page.goto(first_url)
+            final_url = response.url
+            print(final_url)    
+            category_links.append(final_url)
+        await browser.close()
+    return category_links
 
 async def get_data(url: str) -> list:
     product_list = []
@@ -62,21 +103,25 @@ async def get_data(url: str) -> list:
 
 async def main():
     start_time = time.perf_counter()
-    final_list = []
-    with open("data/categories_links.json", "r") as f:
-        categories_links = json.load(f)
-    tasks = []
-    for category_link in categories_links:
-        print(f"Scraping {category_link}")
-        task = asyncio.create_task(get_data(category_link))
-        tasks.append(task)
-    products_list = await asyncio.gather(*tasks)
-    for products in products_list:
-        final_list += products
-        print(f"{len(final_list)} products scraped.")
-        print("-" * 100)
-    with open("data/products.json", "w") as f:
-        json.dump(final_list, f, indent=4)
+    multimedia_links = await get_main_links(multimedia_url)
+    phone_links = await get_main_links(phone_url)
+    categories_links = multimedia_links + phone_links
+    print(len(categories_links))
+    # final_list = []
+    # with open("data/categories_links.json", "r") as f:
+    #     categories_links = json.load(f)
+    # tasks = []
+    # for category_link in categories_links[0]:
+    #     print(f"Scraping {category_link}")
+    #     task = asyncio.create_task(get_data(category_link))
+    #     tasks.append(task)
+    # products_list = await asyncio.gather(*tasks)
+    # for products in products_list:
+    #     final_list += products
+    #     print(f"{len(final_list)} products scraped.")
+    #     print("-" * 100)
+    # with open("data/products.json", "w") as f:
+    #     json.dump(final_list, f, indent=4)
     end_time = time.perf_counter()
     elapsed_time = end_time - start_time
     print(f"Scraping completed in {elapsed_time/60:.2f} minutes.")
