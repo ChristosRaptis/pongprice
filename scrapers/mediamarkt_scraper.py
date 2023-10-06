@@ -8,7 +8,10 @@ import httpx
 from tqdm import tqdm
 import time
 import asyncio
+<<<<<<< HEAD
 from dotenv import load_dotenv
+=======
+>>>>>>> 4449426 (testing mediamarkt)
 
 base_url = "https://www.mediamarkt.be"
 
@@ -125,7 +128,11 @@ async def main():
     #     final_list += products
     #     print(f"{len(final_list)} products scraped.")
     #     print("-" * 100)
+<<<<<<< HEAD
     # with open("data/mediamarkt_products.json", "w") as f:
+=======
+    # with open("data/products.json", "w") as f:
+>>>>>>> 4449426 (testing mediamarkt)
     #     json.dump(final_list, f, indent=4)
     end_time = time.perf_counter()
     elapsed_time = end_time - start_time
