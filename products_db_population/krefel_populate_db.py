@@ -1,5 +1,6 @@
 import psycopg2
 import json
+<<<<<<< HEAD
 import re
 from dotenv import load_dotenv
 import os
@@ -30,12 +31,18 @@ db_password = os.getenv("DB_PASSWORD")
 
 conn = psycopg2.connect(
     host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_password
+=======
+
+conn = psycopg2.connect(
+    host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
+>>>>>>> 97252e9 (modify json)
 )
 
 cur = conn.cursor()
 
 with open("data/krefel_product_data.json", "r") as f:
     data = json.load(f)
+<<<<<<< HEAD
 print(len(data))
 print(data[0])
 print("before")
@@ -57,6 +64,15 @@ for item in data:
             )
     except:
         continue
+=======
+
+for item in data:
+        
+    cur.execute(
+        "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
+        (item.get("url"), item.get("product_name"), item.get("product_price")),
+    )
+>>>>>>> 97252e9 (modify json)
 
 conn.commit()
 cur.close()

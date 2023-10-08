@@ -1,5 +1,6 @@
 import psycopg2
 import json
+<<<<<<< HEAD
 from dotenv import load_dotenv
 import os
 
@@ -16,6 +17,13 @@ conn = psycopg2.connect(
 )
 
 
+=======
+
+conn = psycopg2.connect(
+    host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
+)
+
+>>>>>>> 97252e9 (modify json)
 cur = conn.cursor()
 
 with open("data/bol_products.json", "r") as f:
@@ -23,6 +31,7 @@ with open("data/bol_products.json", "r") as f:
 
 data = data[0]
 
+<<<<<<< HEAD
 
 for item in data:
     if item != None:
@@ -32,5 +41,15 @@ for item in data:
 
 print(len(data))
 # conn.commit()
+=======
+for item in data:
+        
+    cur.execute(
+        "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
+        (item.get("url"), item.get("product_name"), item.get("product_price")),
+    )
+
+conn.commit()
+>>>>>>> 97252e9 (modify json)
 cur.close()
 conn.close()

@@ -1,5 +1,6 @@
 import psycopg2
 import json
+<<<<<<< HEAD
 import re
 from dotenv import load_dotenv
 import os
@@ -31,17 +32,32 @@ conn = psycopg2.connect(
 )
 
 
+=======
+
+conn = psycopg2.connect(
+    host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
+)
+
+>>>>>>> 97252e9 (modify json)
 cur = conn.cursor()
 
 with open("data/mediamarkt_products.json", "r") as f:
     data = json.load(f)
 
+<<<<<<< HEAD
 # cur.execute(
 #     "CREATE TABLE products (url TEXT, product_name TEXT, product_price_in_euros REAL);"
 # )
 
 for item in data:
     item["product_price"] = clean_price(item["product_price"])
+=======
+cur.execute(
+    "CREATE TABLE products (url VARCHAR(255), product_name VARCHAR(500), product_price VARCHAR(255));"
+)
+
+for item in data:
+>>>>>>> 97252e9 (modify json)
     cur.execute(
         "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
         (item["product_url"], item["product_name"], item["product_price"]),

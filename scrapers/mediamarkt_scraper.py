@@ -129,10 +129,14 @@ async def main():
     #     print(f"{len(final_list)} products scraped.")
     #     print("-" * 100)
 <<<<<<< HEAD
+<<<<<<< HEAD
     # with open("data/mediamarkt_products.json", "w") as f:
 =======
     # with open("data/products.json", "w") as f:
 >>>>>>> 4449426 (testing mediamarkt)
+=======
+    # with open("data/mediamarkt_products.json", "w") as f:
+>>>>>>> 97252e9 (modify json)
     #     json.dump(final_list, f, indent=4)
     end_time = time.perf_counter()
     elapsed_time = end_time - start_time
