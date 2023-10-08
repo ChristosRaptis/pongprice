@@ -1,6 +1,7 @@
 import psycopg2
 import json
 <<<<<<< HEAD
+<<<<<<< HEAD
 from dotenv import load_dotenv
 import os
 
@@ -18,6 +19,9 @@ conn = psycopg2.connect(
 
 
 =======
+=======
+import string
+>>>>>>> 2bb951a (populated products db and tested app)
 
 conn = psycopg2.connect(
     host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
@@ -32,6 +36,7 @@ with open("data/bol_products.json", "r") as f:
 data = data[0]
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 for item in data:
     if item != None:
@@ -42,12 +47,19 @@ for item in data:
 print(len(data))
 # conn.commit()
 =======
+=======
+printable = set(string.printable)
+def remove_non_printable_characters(s):
+    return "".join(filter(lambda x: x in string.printable, s))
+
+     
+>>>>>>> 2bb951a (populated products db and tested app)
 for item in data:
-        
-    cur.execute(
-        "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
-        (item.get("url"), item.get("product_name"), item.get("product_price")),
-    )
+    if item != None:
+        item["product_name"] = remove_non_printable_characters(item["product_name"])
+
+        cur.execute("INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
+            (item.get("url"), item.get("product_name"), item.get("product_price")))
 
 conn.commit()
 >>>>>>> 97252e9 (modify json)

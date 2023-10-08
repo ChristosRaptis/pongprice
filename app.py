@@ -108,8 +108,13 @@ def search():
         )
 =======
         
+<<<<<<< HEAD
         results = Product.query.filter(Product.product_name.match(q)).all()
 >>>>>>> 715254c (attempting to scrape Krefel)
+=======
+        results = Product.query.filter(Product.product_name.match(q))\
+            .order_by(Product.product_price.asc()).all()
+>>>>>>> 2bb951a (populated products db and tested app)
     else:
         results = []
 

@@ -53,7 +53,7 @@ for item in data:
     item["product_price"] = clean_price(item["product_price"])
 =======
 cur.execute(
-    "CREATE TABLE products (url VARCHAR(255), product_name VARCHAR(500), product_price VARCHAR(255));"
+    "CREATE TABLE products (url VARCHAR(255), product_name TEXT, product_price VARCHAR(255));"
 )
 
 for item in data:

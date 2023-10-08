@@ -2,6 +2,7 @@ import psycopg2
 import json
 import pandas as pd
 import re 
+<<<<<<< HEAD
 from dotenv import load_dotenv
 import os
 
@@ -30,13 +31,22 @@ db_password = os.getenv("DB_PASSWORD")
 
 conn = psycopg2.connect(
     host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_password
+=======
+
+conn = psycopg2.connect(
+    host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
+>>>>>>> 2bb951a (populated products db and tested app)
 )
 
 cur = conn.cursor()
 # open the csv file data/df_products_vandeborre.csv and store it in a variable called data
 data = pd.read_csv("data/df_products_vandeborre.csv", index_col=0)
+<<<<<<< HEAD
 data["product_name"] = data["product_name"].apply(lambda x: re.sub(pattern, replace_capacity, x))
 data["product_price"] = data["product_price"].apply(lambda x: clean_price(x))
+=======
+data['product_name'] = data['product_name'].str.replace(r'(\d+)GB', r'\1 GB', regex=True)
+>>>>>>> 2bb951a (populated products db and tested app)
 
 data = data.to_dict("records")
 
