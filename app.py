@@ -73,7 +73,8 @@ def search():
 
     if q:
         
-        results = Product.query.filter(Product.product_name.match(q)).all()
+        results = Product.query.filter(Product.product_name.match(q))\
+            .order_by(Product.product_price.asc()).all()
     else:
         results = []
 

@@ -11,7 +11,7 @@ with open("data/mediamarkt_products.json", "r") as f:
     data = json.load(f)
 
 cur.execute(
-    "CREATE TABLE products (url VARCHAR(255), product_name VARCHAR(500), product_price VARCHAR(255));"
+    "CREATE TABLE products (url VARCHAR(255), product_name TEXT, product_price VARCHAR(255));"
 )
 
 for item in data:
