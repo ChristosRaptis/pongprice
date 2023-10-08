@@ -124,7 +124,7 @@ async def main():
     #     final_list += products
     #     print(f"{len(final_list)} products scraped.")
     #     print("-" * 100)
-    # with open("data/products.json", "w") as f:
+    # with open("data/mediamarkt_products.json", "w") as f:
     #     json.dump(final_list, f, indent=4)
     end_time = time.perf_counter()
     elapsed_time = end_time - start_time

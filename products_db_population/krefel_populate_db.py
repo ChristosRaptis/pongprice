@@ -7,17 +7,14 @@ conn = psycopg2.connect(
 
 cur = conn.cursor()
 
-with open("products.json", "r") as f:
+with open("data/krefel_product_data.json", "r") as f:
     data = json.load(f)
 
-cur.execute(
-    "CREATE TABLE products (url VARCHAR(255), product_name VARCHAR(255), product_price VARCHAR(255));"
-)
-
 for item in data:
+        
     cur.execute(
         "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
-        (item["product_url"], item["product_name"], item["product_price"]),
+        (item.get("url"), item.get("product_name"), item.get("product_price")),
     )
 
 conn.commit()
