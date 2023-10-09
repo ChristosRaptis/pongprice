@@ -3,6 +3,9 @@ import json
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 14b8c84 (html logos)
 from dotenv import load_dotenv
 import os
 
@@ -14,6 +17,7 @@ db_name = os.getenv("DB_NAME")
 db_user = os.getenv("DB_USER")
 db_password = os.getenv("DB_PASSWORD")
 
+<<<<<<< HEAD
 conn = psycopg2.connect(
     host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_password
 )
@@ -27,11 +31,17 @@ import string
 
 >>>>>>> ca87103 (modified files for prices)
 
+=======
+>>>>>>> 14b8c84 (html logos)
 conn = psycopg2.connect(
-    host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
+    host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_password
 )
 
+<<<<<<< HEAD
 >>>>>>> 97252e9 (modify json)
+=======
+
+>>>>>>> 14b8c84 (html logos)
 cur = conn.cursor()
 
 with open("data/bol_products.json", "r") as f:
@@ -50,6 +60,7 @@ for item in data:
         #     (item.get("url"), item.get("product_name"), item.get("product_price")))
 
 print(len(data))
+<<<<<<< HEAD
 # conn.commit()
 =======
 =======
@@ -78,6 +89,8 @@ conn.commit()
 >>>>>>> 97252e9 (modify json)
 =======
 print(len(data))  
+=======
+>>>>>>> 14b8c84 (html logos)
 # conn.commit()
 >>>>>>> ca87103 (modified files for prices)
 cur.close()

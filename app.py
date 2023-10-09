@@ -33,7 +33,7 @@ class Product(db.Model):
     __tablename__ = "products"
     url = db.Column(db.String(255), primary_key=True)
     product_name = db.Column(db.String(255))
-    product_price_in_euros = db.Column(db.String(255))
+    product_price = db.Column(db.String(255))
 
 >>>>>>> 7ba69f6 (attempting to scrape Krefel)
 >>>>>>> 715254c (attempting to scrape Krefel)
@@ -44,9 +44,15 @@ def create_app():
         "SQLALCHEMY_DATABASE_URI"
     ] = "postgresql://postgres:7530@127.0.0.1/postgres"
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 385f7e9 (update for flask)
+=======
+=======
+
+>>>>>>> 7f0a80b (html logos)
+>>>>>>> 14b8c84 (html logos)
     db.init_app(app)
     app.register_blueprint(main)
     return app
@@ -55,7 +61,10 @@ def create_app():
 main = Blueprint("main", __name__)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 14b8c84 (html logos)
 # define TSVECTOR type
 TSVECTOR = db.Text().with_variant(db.Text(), "postgresql")
 
@@ -82,7 +91,12 @@ class Product(db.Model):
         results = cls.query.filter(cls.product_name_tsvector.match(search_vector)).all()
         return render_template("search_results.html", results=results)
 
+<<<<<<< HEAD
 >>>>>>> 385f7e9 (update for flask)
+=======
+=======
+>>>>>>> 7f0a80b (html logos)
+>>>>>>> 14b8c84 (html logos)
 
 @main.route("/")
 def index():
@@ -101,11 +115,15 @@ def search():
 
     if q:
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 14b8c84 (html logos)
         results = (
             Product.query.filter(Product.product_name.match(q))
             .order_by(Product.product_price.asc())
             .all()
         )
+<<<<<<< HEAD
 =======
         
 <<<<<<< HEAD
@@ -119,6 +137,8 @@ def search():
 =======
             .order_by(Product.product_price_in_euros.asc()).all()
 >>>>>>> ca87103 (modified files for prices)
+=======
+>>>>>>> 14b8c84 (html logos)
     else:
         results = []
 

@@ -9,9 +9,13 @@ from tqdm import tqdm
 import time
 import asyncio
 <<<<<<< HEAD
+<<<<<<< HEAD
 from dotenv import load_dotenv
 =======
 >>>>>>> 4449426 (testing mediamarkt)
+=======
+from dotenv import load_dotenv
+>>>>>>> 14b8c84 (html logos)
 
 base_url = "https://www.mediamarkt.be"
 
