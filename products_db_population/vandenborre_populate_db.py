@@ -2,6 +2,9 @@ import psycopg2
 import json
 import pandas as pd
 import re 
+from dotenv import load_dotenv
+import os
+
 
 # Define a regular expression pattern to match storage capacity values
 pattern = r"(\d+)(G[Bo]|T[Bo])(?:/(\d+)(G[Bo]|T[Bo]))?"
@@ -17,8 +20,16 @@ def clean_price(s):
     s = s.replace(' ', '').replace('\xa0', '').replace('.', '').replace('€', '').replace('\u202f', '').replace('–', '').replace(',', '.').rstrip('0').rstrip(',').rstrip('-')
     return float(s)    
 
+load_dotenv()
+
+db_host = os.getenv("DB_HOST")
+db_port = os.getenv("DB_PORT")
+db_name = os.getenv("DB_NAME")
+db_user = os.getenv("DB_USER")
+db_password = os.getenv("DB_PASSWORD")
+
 conn = psycopg2.connect(
-    host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
+    host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_password
 )
 
 cur = conn.cursor()
@@ -32,7 +43,7 @@ data = data.to_dict("records")
 for item in data:
         
     cur.execute(
-        "INSERT INTO products (url, product_name, product_price_in_euros) VALUES (%s, %s, %s);",
+        "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
         (item.get("url"), item.get("product_name"), item.get("product_price")),
     )
 
