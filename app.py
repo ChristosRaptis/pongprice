@@ -1,14 +1,14 @@
 from flask import Flask, request, render_template, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-import psycopg2
 
 db = SQLAlchemy()
+
 
 class Product(db.Model):
     __tablename__ = "products"
     url = db.Column(db.String(255), primary_key=True)
     product_name = db.Column(db.String(255))
-    product_price = db.Column(db.String(255))
+    product_price_in_euros = db.Column(db.String(255))
 
 
 def create_app():
@@ -37,7 +37,8 @@ def search():
 
     if q:
         
-        results = Product.query.filter(Product.product_name.icontains(q)).all()
+        results = Product.query.filter(Product.product_name.match(q))\
+            .order_by(Product.product_price_in_euros.asc()).all()
     else:
         results = []
 
