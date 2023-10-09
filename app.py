@@ -16,7 +16,7 @@ class Product(db.Model):
     __tablename__ = "products"
     url = db.Column(db.String(255), primary_key=True)
     product_name = db.Column(db.String(255))
-    product_price_in_euros = db.Column(db.String(255))
+    product_price = db.Column(db.String(255))
 
 >>>>>>> 7ba69f6 (attempting to scrape Krefel)
 
@@ -25,6 +25,10 @@ def create_app():
     app.config[
         "SQLALCHEMY_DATABASE_URI"
     ] = "postgresql://postgres:7530@127.0.0.1/postgres"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7f0a80b (html logos)
     db.init_app(app)
     app.register_blueprint(main)
     return app
@@ -32,6 +36,7 @@ def create_app():
 
 main = Blueprint("main", __name__)
 
+<<<<<<< HEAD
 # define TSVECTOR type
 TSVECTOR = db.Text().with_variant(db.Text(), "postgresql")
 
@@ -58,6 +63,8 @@ class Product(db.Model):
         results = cls.query.filter(cls.product_name_tsvector.match(search_vector)).all()
         return render_template("search_results.html", results=results)
 
+=======
+>>>>>>> 7f0a80b (html logos)
 
 @main.route("/")
 def index():
@@ -72,9 +79,11 @@ def search():
     print(q)
 
     if q:
-        
-        results = Product.query.filter(Product.product_name.match(q))\
-            .order_by(Product.product_price_in_euros.asc()).all()
+        results = (
+            Product.query.filter(Product.product_name.match(q))
+            .order_by(Product.product_price.asc())
+            .all()
+        )
     else:
         results = []
 
