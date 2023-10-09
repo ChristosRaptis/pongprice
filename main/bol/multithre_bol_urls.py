@@ -20,7 +20,9 @@ session = requests.Session()
 
 def scrape_bol(url):
     try:
-        driver = webdriver.Chrome()
+        options = Options()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
         page_source = driver.get(url)
         page_source
 
@@ -67,7 +69,9 @@ def scrape_bol(url):
                 product_info["product_price"] = product_price.text.strip()
             time.sleep(3)
 
-            return product_info
+            product_info_list.append(product_info)
+
+        return product_info_list
 
     except Exception as e:
         print(f"Error scraping {url}: {str(e)}")
@@ -79,20 +83,21 @@ def scrape_bol(url):
 def main():
     session = requests.Session()
     driver = webdriver.Chrome()
-    with open("bol_urls.json", "r") as file:
+    with open("bol/bol_urls.json", "r") as file:
         bol_urls = json.load(file)
 
     list_products = []
 
-    with ThreadPoolExecutor(max_workers=3) as pool:
+    with ThreadPoolExecutor(max_workers=5) as pool:
         results = list(
             tqdm(
                 pool.map(scrape_bol, bol_urls), desc="Scraping Bol", total=len(bol_urls)
             )
         )
-        list_products.append(results)
+        list_products.extend(results)
+        print(list_products)
 
-    with open("bol_products_5.json", "w") as outfile:
+    with open("bol_products_6.json", "w") as outfile:
         json.dump(list_products, outfile)
 
 
