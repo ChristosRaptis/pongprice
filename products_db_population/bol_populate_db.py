@@ -2,6 +2,7 @@ import psycopg2
 import json
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from dotenv import load_dotenv
 import os
 
@@ -22,6 +23,9 @@ conn = psycopg2.connect(
 =======
 import string
 >>>>>>> 2bb951a (populated products db and tested app)
+=======
+
+>>>>>>> ca87103 (modified files for prices)
 
 conn = psycopg2.connect(
     host="localhost", dbname="postgres", user="postgres", password="1234", port=5432
@@ -35,6 +39,7 @@ with open("data/bol_products.json", "r") as f:
 
 data = data[0]
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 
@@ -54,14 +59,26 @@ def remove_non_printable_characters(s):
 
      
 >>>>>>> 2bb951a (populated products db and tested app)
+=======
+
+
+   
+>>>>>>> ca87103 (modified files for prices)
 for item in data:
     if item != None:
-        item["product_name"] = remove_non_printable_characters(item["product_name"])
+        print(item.get("url"))
+        # cur.execute("INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
+        #     (item.get("url"), item.get("product_name"), item.get("product_price")))
 
+<<<<<<< HEAD
         cur.execute("INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
             (item.get("url"), item.get("product_name"), item.get("product_price")))
 
 conn.commit()
 >>>>>>> 97252e9 (modify json)
+=======
+print(len(data))  
+# conn.commit()
+>>>>>>> ca87103 (modified files for prices)
 cur.close()
 conn.close()
