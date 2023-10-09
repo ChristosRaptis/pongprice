@@ -95,6 +95,7 @@ for url in list_urls_bol:
             time.sleep(5)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # while next_button:
 #     next_button = WebDriverWait(driver, 10).until(
@@ -110,6 +111,8 @@ for url in list_urls_bol:
 #         EC.presence_of_element_located((By.CLASS_NAME, "js_items_content"))
 #     )
 >>>>>>> 22d5eec (reordering folders)
+=======
+>>>>>>> 89bc173 (update week 3)
 
 df_products_vandeborre = pd.DataFrame(product_info_list)
 df_products_vandeborre.to_csv("df_products_bol.csv")

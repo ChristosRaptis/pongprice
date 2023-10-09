@@ -21,12 +21,18 @@ session = requests.Session()
 def scrape_bol(url):
     try:
 <<<<<<< HEAD
+<<<<<<< HEAD
         options = Options()
         options.add_argument("--headless")
         driver = webdriver.Chrome(options=options)
 =======
         driver = webdriver.Chrome()
 >>>>>>> 22d5eec (reordering folders)
+=======
+        options = Options()
+        options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
+>>>>>>> 89bc173 (update week 3)
         page_source = driver.get(url)
         page_source
 
@@ -74,12 +80,18 @@ def scrape_bol(url):
             time.sleep(3)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             product_info_list.append(product_info)
 
         return product_info_list
 =======
             return product_info
 >>>>>>> 22d5eec (reordering folders)
+=======
+            product_info_list.append(product_info)
+
+        return product_info_list
+>>>>>>> 89bc173 (update week 3)
 
     except Exception as e:
         print(f"Error scraping {url}: {str(e)}")
@@ -92,24 +104,33 @@ def main():
     session = requests.Session()
     driver = webdriver.Chrome()
 <<<<<<< HEAD
+<<<<<<< HEAD
     with open("bol/bol_urls.json", "r") as file:
 =======
     with open("bol_urls.json", "r") as file:
 >>>>>>> 22d5eec (reordering folders)
+=======
+    with open("bol/bol_urls.json", "r") as file:
+>>>>>>> 89bc173 (update week 3)
         bol_urls = json.load(file)
 
     list_products = []
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     with ThreadPoolExecutor(max_workers=5) as pool:
 =======
     with ThreadPoolExecutor(max_workers=3) as pool:
 >>>>>>> 22d5eec (reordering folders)
+=======
+    with ThreadPoolExecutor(max_workers=5) as pool:
+>>>>>>> 89bc173 (update week 3)
         results = list(
             tqdm(
                 pool.map(scrape_bol, bol_urls), desc="Scraping Bol", total=len(bol_urls)
             )
         )
+<<<<<<< HEAD
 <<<<<<< HEAD
         list_products.extend(results)
         print(list_products)
@@ -120,6 +141,12 @@ def main():
 
     with open("bol_products_5.json", "w") as outfile:
 >>>>>>> 22d5eec (reordering folders)
+=======
+        list_products.extend(results)
+        print(list_products)
+
+    with open("bol_products_6.json", "w") as outfile:
+>>>>>>> 89bc173 (update week 3)
         json.dump(list_products, outfile)
 
 
