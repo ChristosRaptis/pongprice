@@ -8,22 +8,24 @@ class Product(db.Model):
     __tablename__ = "products"
     url = db.Column(db.String(255), primary_key=True)
     product_name = db.Column(db.String(255))
-    product_price_in_euros = db.Column(db.String(255))
+    product_price = db.Column(db.String(255))
 
 
 def create_app():
     app = Flask(__name__)
     app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "postgresql://postgres:1234@127.0.0.1/postgres"
-    
+    ] = "postgresql://postgres:7530@127.0.0.1/postgres"
+
     db.init_app(app)
 
     app.register_blueprint(main)
 
     return app
 
+
 main = Blueprint("main", __name__)
+
 
 @main.route("/")
 def index():
@@ -36,9 +38,11 @@ def search():
     print(q)
 
     if q:
-        
-        results = Product.query.filter(Product.product_name.match(q))\
-            .order_by(Product.product_price_in_euros.asc()).all()
+        results = (
+            Product.query.filter(Product.product_name.match(q))
+            .order_by(Product.product_price.asc())
+            .all()
+        )
     else:
         results = []
 

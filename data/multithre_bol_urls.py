@@ -15,14 +15,12 @@ from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
 
 beggining = time.perf_counter()
-session = requests.Session()
 
 
 def scrape_bol(url):
+    url = f"{url}&rating=all"
     try:
-        options = Options()
-        options.add_argument("--headless")
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome()
         page_source = driver.get(url)
         page_source
 
@@ -58,6 +56,7 @@ def scrape_bol(url):
             # print(paragraph)
             product_info = {}
             product = paragraph.find("div", class_="product-title--inline")
+
             if product:
                 product_info["product_name"] = product.text.strip()
                 product_info[
@@ -65,6 +64,7 @@ def scrape_bol(url):
                 ] = f'https://www.bol.com{paragraph.find("a", class_="product-title px_list_page_product_click list_page_product_tracking_target")["href"]}'
 
             product_price = paragraph.find("span", class_="promo-price")
+
             if product_price:
                 product_info["product_price"] = product_price.text.strip()
             time.sleep(3)
@@ -81,24 +81,21 @@ def scrape_bol(url):
 
 
 def main():
-    session = requests.Session()
-    driver = webdriver.Chrome()
-    with open("bol/bol_urls.json", "r") as file:
-        bol_urls = json.load(file)
+    with open("data/bol_urls.json", "r") as file:
+        bol_urls = json.load(file)[0:5]
 
     list_products = []
 
-    with ThreadPoolExecutor(max_workers=5) as pool:
+    with ThreadPoolExecutor(max_workers=3) as pool:
         results = list(
             tqdm(
                 pool.map(scrape_bol, bol_urls), desc="Scraping Bol", total=len(bol_urls)
             )
         )
-        list_products.extend(results)
-        print(list_products)
+    print(len(results))
 
-    with open("bol_products_6.json", "w") as outfile:
-        json.dump(list_products, outfile)
+    with open("bol_products_8.json", "w") as outfile:
+        json.dump(results, outfile)
 
 
 if __name__ == "__main__":
