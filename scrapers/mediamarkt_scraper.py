@@ -5,6 +5,7 @@ import httpx
 from tqdm import tqdm
 import time
 import asyncio
+from dotenv import load_dotenv
 
 base_url = "https://www.mediamarkt.be"
 

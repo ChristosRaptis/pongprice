@@ -9,19 +9,32 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <script src="https://unpkg.com/htmx.org@1.9.4"></script>
 </head>
+<header style="background-color:#06D0DC">
+  <img src="logo_pongy2.png" class ="center">
+ </header>  
+<style>
+  .center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+header {min-height: 100px }
+p {text-align: center;}
+</style>
 <body>
   <section class="section">
     <div class="columns">
-      <div class="column is-one-third is-offset-one-third">
+      <div class="column is-one-fourth is-offset-one-fourth">
         <input type="text" class="input" placeholder="Search" name="q" hx-get="/search" hx-trigger="keyup changed delay:500ms" hx-target="#results">
       </div>
     </div>
     <table class="table is-fullwidth">
       <thead>
         <tr>
-          <th>Product Name</th>
-          <th>Product Price in Euros</th>
-          <th>Url</th>
+          <th><font size="+2">Website</font></th>
+          <th><font size="+2">Product Name</font></th>
+          <th><font size="+2">Product Price (€)</font></th>
+          <th><font size="+2">Url</font></th>
         </tr>
       </thead>
       <tbody id="results">
