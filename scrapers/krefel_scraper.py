@@ -19,11 +19,6 @@ product_sitemaps = [
     if "product" in url.text
 ]
 
-# product_sitemaps = [
-#     f"https://media.krefel.be/sys-master/sitemap/product-fr-{n}.xml"
-#     for n in range(0, 20)
-# ]
-
 
 def get_product_data(product_url: str):
     """

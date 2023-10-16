@@ -53,6 +53,7 @@ def get_soup(url: str, parser:str) -> bs:
 
     Args:
         product_url (str): product url
+        parser (str): parser to use, 'html.parser' or 'lxml'
     Returns:
         bs: BeautifulSoup object
     """
