@@ -36,9 +36,9 @@ cur = conn.cursor()
 with open("data/mediamarkt_products.json", "r") as f:
     data = json.load(f)
 
-# cur.execute(
-#     "CREATE TABLE products (url TEXT, product_name TEXT, product_price_in_euros REAL);"
-# )
+cur.execute(
+    "CREATE TABLE products (url TEXT, product_name TEXT, product_price REAL);"
+)
 
 for item in data:
     item["product_price"] = clean_price(item["product_price"])

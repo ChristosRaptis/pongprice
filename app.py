@@ -8,7 +8,7 @@ class Product(db.Model):
     __tablename__ = "products"
     url = db.Column(db.String(255), primary_key=True)
     product_name = db.Column(db.String(255))
-    product_price = db.Column(db.String(255))
+    product_price_in_euros = db.Column(db.String(255))
 
 
 def create_app():
