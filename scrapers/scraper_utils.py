@@ -48,11 +48,12 @@ def get_product_urls_from_xml(sitemap_urls_list: list) -> list:
     return product_urls
 
 
-def get_soup(url: str, parser:str) -> bs:
+def get_soup(url: str, parser: str) -> bs:
     """Returns a BeautifulSoup object from a product url
 
     Args:
         product_url (str): product url
+        parser (str): parser to use, 'html.parser' or 'xml'
     Returns:
         bs: BeautifulSoup object
     """
@@ -108,7 +109,7 @@ def get_db_connection():
 
 
 def update_database(product_data: dict, cursor) -> None:
-    """Checks the database for the product url (unique key) of the product data, if it exists it updates the price, 
+    """Checks the database for the product url (unique key) of the product data, if it exists it updates the price,
        if not it inserts the product data
 
     Args:
@@ -135,6 +136,3 @@ def update_database(product_data: dict, cursor) -> None:
                 product_data["product_price"],
             ),
         )
-
-
-    
