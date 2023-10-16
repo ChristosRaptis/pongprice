@@ -26,7 +26,7 @@ import os
 import psycopg2
 
 
-def get_product_urls(sitemap_urls_list: list) -> list:
+def get_product_urls_from_xml(sitemap_urls_list: list) -> list:
     """Returns a list of product urls from a list of sitemap urls
 
     Args:
@@ -48,7 +48,7 @@ def get_product_urls(sitemap_urls_list: list) -> list:
     return product_urls
 
 
-def get_data_soup(product_url: str) -> bs:
+def get_soup(url: str, parser:str) -> bs:
     """Returns a BeautifulSoup object from a product url
 
     Args:
@@ -59,8 +59,8 @@ def get_data_soup(product_url: str) -> bs:
 
     user_agent = fake_useragent.UserAgent().random
     headers = {"User-Agent": user_agent}
-    response = requests.get(product_url, headers=headers)
-    soup = bs(response.text, "html.parser")
+    response = requests.get(url, headers=headers)
+    soup = bs(response.text, parser)
     return soup
 
 
