@@ -48,12 +48,12 @@ def get_product_data(product_url: str):
         product_data["product_name"] = None
         product_data["product_price"] = None
     # still need to test this part, maybe combine these two functions into one    
-    # conn = get_db_connection()
-    # cur = conn.cursor()    
-    # update_database(product_data, cur)
-    # conn.commit()
-    # cur.close()
-    # conn.close()
+    conn = get_db_connection()
+    cur = conn.cursor()    
+    update_database(product_data, cur)
+    conn.commit()
+    cur.close()
+    conn.close()
     return product_data
 
 
