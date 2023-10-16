@@ -67,7 +67,7 @@ def main():
         product_list = list(
             tqdm(
                 
-                executor.map(get_product_data, product_urls[:10]),
+                executor.map(get_product_data, product_urls),
                 total=len(product_urls),
                 desc="Scraping Krefel",
             )
