@@ -9,17 +9,22 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <script src="https://unpkg.com/htmx.org@1.9.4"></script>
 </head>
-<header style="background-color:#06D0DC">
-  <img src="logo_pongy2.png" class ="center">
+<header class="header-image" style="background-color:#9479ef">
+  <img src="{{url_for('static', filename='images/Pong_logo_11_website.png')}}"  
+       alt="Logo website Pongprice"
+       width="80px"
+       height="80px"
+       />
  </header>  
 <style>
-  .center {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
+
 header {min-height: 100px }
 p {text-align: center;}
+.header-image {
+    text-align: center;
+    padding-top: 15px;
+  }
+
 </style>
 <body>
   <section class="section">
