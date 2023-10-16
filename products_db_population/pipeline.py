@@ -1,22 +1,35 @@
 import psycopg2
-from config import DATABASE_CONFIG
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+
+db_host = os.getenv("DB_HOST")
+db_port = os.getenv("DB_PORT")
+db_name = os.getenv("DB_NAME")
+db_user = os.getenv("DB_USER")
+db_password = os.getenv("DB_PASSWORD")
 
 conn = psycopg2.connect(
-    host=DATABASE_CONFIG["host"],
-    port=DATABASE_CONFIG["port"],
-    user=DATABASE_CONFIG["user"],
-    password=DATABASE_CONFIG["password"],
+    host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_password
 )
 
 cur = conn.cursor()
 
 insert_query = """
-DELETE FROM products
-WHERE (product_name, ctid) NOT IN (
-    SELECT product_name, MIN(ctid) as min_ctid
+WITH Duplicates AS (
+    SELECT product_name, ctid,
+    ROW_NUMBER() OVER (PARTITION BY REPLACE(REPLACE(product_name, 'GB', 'Go'), ' ', '') ORDER BY ctid) AS rnum
     FROM products
-    GROUP BY product_name)
-    """
+)
+DELETE FROM products
+WHERE (product_name, ctid) IN (
+    SELECT product_name, ctid
+    FROM Duplicates
+    WHERE rnum > 1
+);
+"""
 
 cur.execute(insert_query)
 

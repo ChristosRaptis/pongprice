@@ -24,6 +24,7 @@ from tqdm import tqdm
 from dotenv import load_dotenv
 import os
 import psycopg2
+import json
 
 
 def get_product_urls_from_xml(sitemap_urls_list: list) -> list:
@@ -136,3 +137,12 @@ def update_database(product_data: dict, cursor) -> None:
                 product_data["product_price"],
             ),
         )
+
+def dump_json(list_of_items, name_json_file):
+    with open(name_json_file, "w") as outfile:
+        json.dump(list_of_items, outfile)
+
+def open_json(name_json_file):
+    with open(name_json_file, "r") as file:
+        json_list = json.load(file)
+        return json_list
