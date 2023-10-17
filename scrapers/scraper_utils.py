@@ -5,7 +5,7 @@ functions:
 - `get_product_urls`
 - `get_data_soup`
 - `clean_price`
-- `get_db_connection`
+- `update_database`
 
 libraries:
 - `requests`
@@ -89,12 +89,15 @@ def clean_price(number: str) -> float:
     return float(number)
 
 
-def get_db_connection():
-    """Returns a connection to the postgreSQL database
+def update_database(product_data: dict) -> None:
+    """Checks the database for the product url (unique key) of the product data, if it exists it updates the price,
+       if not it inserts the product data
 
-    Returns:
-        psycopg2.connection: connection to the database
+    Args:
+        product_data (dict): dictionary containing the product url, name and price
+        cursor: cursor to the database
     """
+    # connect to database and set cursor
     load_dotenv()
     db_host = os.getenv("DB_HOST")
     db_port = os.getenv("DB_PORT")
@@ -105,17 +108,8 @@ def get_db_connection():
     conn = psycopg2.connect(
         host=db_host, port=db_port, dbname=db_name, user=db_user, password=db_password
     )
-    return conn
-
-
-def update_database(product_data: dict, cursor) -> None:
-    """Checks the database for the product url (unique key) of the product data, if it exists it updates the price,
-       if not it inserts the product data
-
-    Args:
-        product_data (dict): dictionary containing the product url, name and price
-        cursor: cursor to the database
-    """
+    cursor = conn.cursor()
+    
     cursor.execute(
         "SELECT EXISTS(SELECT 1 FROM products WHERE url=%s);", (product_data["url"],)
     )
@@ -136,3 +130,6 @@ def update_database(product_data: dict, cursor) -> None:
                 product_data["product_price"],
             ),
         )
+    conn.commit()
+    cursor.close()
+    conn.close()    

@@ -6,7 +6,6 @@ from scraper_utils import (
     get_soup,
     get_product_urls_from_xml,
     clean_price,
-    get_db_connection,
     update_database,
 )
 
@@ -43,14 +42,8 @@ def get_product_data(product_url: str):
         print("error getting data")
         product_data["product_name"] = None
         product_data["product_price"] = None
-    
-    conn = get_db_connection()
-    cur = conn.cursor()
-    update_database(product_data, cur)
-    conn.commit()
-    cur.close()
-    conn.close()
 
+    update_database(product_data)
     return product_data
 
 
@@ -67,8 +60,7 @@ def main():
                 desc="Scraping Krefel",
             )
         )
-    # with open("data/krefel_product_data.json", "w") as outfile:
-    #     json.dump(product_list, outfile, indent=4)
+
     print(product_list)
     print(f"Scraped {len(product_list)} products ")
     end_time = time.perf_counter()
