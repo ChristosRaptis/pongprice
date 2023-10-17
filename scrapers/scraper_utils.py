@@ -24,6 +24,7 @@ from tqdm import tqdm
 from dotenv import load_dotenv
 import os
 import psycopg2
+import json
 
 
 def get_product_urls_from_xml(sitemap_urls_list: list) -> list:
@@ -65,7 +66,7 @@ def get_soup(url: str, parser: str) -> bs:
     return soup
 
 
-def clean_price(number: str) -> float:
+def clean_price(number) -> float:
     """Returns a float from a string containing a price
 
     Args:
@@ -74,8 +75,9 @@ def clean_price(number: str) -> float:
         float: price as a float
 
     """
+    
     number = (
-        number.replace(" ", "")
+        str(number).replace(" ", "")
         .replace("\xa0", "")
         .replace(".", "")
         .replace("€", "")
@@ -133,3 +135,38 @@ def update_database(product_data: dict) -> None:
     conn.commit()
     cursor.close()
     conn.close()    
+
+def get_product_data(product_url: str, conn):
+    """
+    Returns a dictionary containing the product url, name and price from a product url
+
+    Args:
+        product_url (str): product url
+    Returns:
+        dict: dictionary containing the product url, name and price
+
+    """
+    print(f"Scraping {product_url}")
+    product_data = {}
+
+    soup = get_soup(product_url, "html.parser")
+    scripts = soup.find_all("script", type="application/ld+json")
+    print(len(scripts))
+    for script in scripts:
+        data = json.loads(script.string)
+        if "offers" in data:
+            # Process the data as needed
+            try:
+                product_data["url"] = product_url
+                product_data["product_name"] = data["name"]
+                product_data["product_price"] = clean_price(data["offers"]["price"])
+            except:
+                print("error getting data")
+                pass
+
+    # verifies if product_data not empty
+    if bool(product_data):
+        
+        update_database(product_data)
+        
+    return product_data

@@ -39,7 +39,7 @@ def get_product_data(product_url: str):
             "data"
         ]
         product_data["product_name"] = data["manufacturer"] + " " + data["name"]
-        product_data["product_price"] = clean_price(data["price"]["formattedValue"])
+        product_data["product_price"] = data["price"]["value"]
     except:
         print("error getting data")
         product_data["product_name"] = None
@@ -57,7 +57,7 @@ def main():
     with ThreadPoolExecutor(max_workers=3) as executor:
         product_list = list(
             tqdm(
-                executor.map(get_product_data, product_urls),
+                executor.map(get_product_data, product_urls[:3]),
                 total=len(product_urls),
                 desc="Scraping Krefel",
             )
