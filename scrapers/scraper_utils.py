@@ -95,7 +95,7 @@ def update_database(product_data: dict) -> None:
 
     Args:
         product_data (dict): dictionary containing the product url, name and price
-        cursor: cursor to the database
+        
     """
     # connect to database and set cursor
     load_dotenv()
