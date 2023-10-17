@@ -1,0 +1,24 @@
+{
+    "@context": "https://schema.org/",
+    "@type": "BuyAction",
+    "object": {
+        "@type": "Product",
+        "brand": {
+            "@type": "Brand",
+            "name": "ISY"
+        },
+        "description": "Commande le ISY Protection d'écran en verre Black Frame iPhone X / XS / 11 Pro Noir (IPG 5009-2.5D RETAIL) à MediaMarkt. En ligne ou dans l'un de nos magasins. Des prix équitables, pour ne jamais payer trop cher !",
+        "sku": "1876303",
+        "gtin13": "4049011156753",
+        "image": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_74065533/fee_786_587_png",
+        "name": "ISY Protection d'écran en verre Black Frame iPhone X / XS / 11 Pro Noir (IPG 5009-2.5D RETAIL)",
+        "url": "https://www.mediamarkt.be/fr/product/_isy-protection-d-écran-en-verre-black-frame-iphone-x-xs-11-pro-noir-ipg-5009-2-5d-retail-1876303.html",
+        "offers": {
+            "@type": "Offer",
+            "priceCurrency": "EUR",
+            "price": 19.99,
+            "availability": "http://schema.org/InStock",
+            "url": "https://www.mediamarkt.be/fr/product/_isy-protection-d-écran-en-verre-black-frame-iphone-x-xs-11-pro-noir-ipg-5009-2-5d-retail-1876303.html"
+        }
+    }
+}

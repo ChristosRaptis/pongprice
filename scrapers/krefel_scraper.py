@@ -19,6 +19,8 @@ product_sitemaps = [
 
 def get_product_data(product_url: str):
     """
+    Checks if the product is in the database, if yes updates the price, if not adds it to the database
+    
     Returns a dictionary containing the product url, name and price from a product url
 
     Args:
