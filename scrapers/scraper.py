@@ -156,7 +156,7 @@ class Scraper:
         product_data = {}
         soup = self.get_soup(product_url, "html.parser")
 
-        if "krefel" in self.site :
+        if "krefel" in product_url :
             script = soup.find("script", type="application/json")
             dict = json.loads(script.string)
             try:
@@ -164,12 +164,14 @@ class Scraper:
                     "data"
                 ]
                 product_data["product_name"] = data["manufacturer"] + " " + data["name"]
-                product_data["product_price"] = clean_price(data["price"]["formattedValue"])
+                product_data["product_price"] = data["price"]["value"]
             except:
                 print("error getting data")
-                product_data["product_name"] = None
-                product_data["product_price"] = None
+                pass
         
+        elif ("mediamarkt" or "vandenborre") in product_url :
+
+
         
         
         scripts = soup.find_all("script", type="application/ld+json")

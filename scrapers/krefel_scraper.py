@@ -40,7 +40,7 @@ def get_product_data(product_url: str):
             "data"
         ]
         product_data["product_name"] = data["manufacturer"] + " " + data["name"]
-        product_data["product_price"] = data["strikePrice"]["value"]
+        product_data["product_price"] = data["price"]["value"]
     except:
         print("error getting data")
         product_data["product_name"] = None
@@ -53,7 +53,6 @@ def get_product_data(product_url: str):
     cur.close()
     conn.close()
     return product_data
-
 
 def main():
     start_time = time.perf_counter()
