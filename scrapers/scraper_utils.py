@@ -138,11 +138,51 @@ def update_database(product_data: dict, cursor) -> None:
             ),
         )
 
+
 def dump_json(list_of_items, name_json_file):
     with open(name_json_file, "w") as outfile:
         json.dump(list_of_items, outfile)
+
 
 def open_json(name_json_file):
     with open(name_json_file, "r") as file:
         json_list = json.load(file)
         return json_list
+
+
+def get_product_data(product_url: str, conn):
+    """
+    Returns a dictionary containing the product url, name and price from a product url
+
+    Args:
+        product_url (str): product url
+    Returns:
+        dict: dictionary containing the product url, name and price
+
+    """
+    print(f"Scraping {product_url}")
+    product_data = {}
+
+    soup = get_soup(product_url, "html.parser")
+    scripts = soup.find_all("script", type="application/ld+json")
+    print(len(scripts))
+    for script in scripts:
+        data = json.loads(script.string)
+        if "offers" in data:
+            # Process the data as needed
+            try:
+                product_data["url"] = product_url
+                product_data["product_name"] = data["name"]
+                product_data["product_price"] = clean_price(data["offers"]["price"])
+            except:
+                print("error getting data")
+                pass
+
+    # verifies if product_data not empty
+    if bool(product_data):
+        cur = conn.cursor()
+        update_database(product_data, cur)
+        conn.commit()
+        cur.close()
+
+    return product_data
