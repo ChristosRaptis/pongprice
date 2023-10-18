@@ -1,4 +1,3 @@
-import json
 from concurrent.futures import ThreadPoolExecutor
 import time
 from tqdm import tqdm
