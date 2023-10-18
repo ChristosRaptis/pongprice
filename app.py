@@ -1,9 +1,16 @@
 from flask import Flask, request, render_template, Blueprint
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+import os
 
 db = SQLAlchemy()
 
-
+load_dotenv()
+db_host = os.getenv("DB_HOST")
+db_port = os.getenv("DB_PORT")
+db_name = os.getenv("DB_NAME")
+db_user = os.getenv("DB_USER")
+db_password = os.getenv("DB_PASSWORD")
 class Product(db.Model):
     __tablename__ = "products"
     url = db.Column(db.String(255), primary_key=True)
@@ -15,7 +22,7 @@ def create_app():
     app = Flask(__name__, static_url_path="/static")
     app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "postgresql://postgres:7530@127.0.0.1/postgres"
+    ] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
     db.init_app(app)
 

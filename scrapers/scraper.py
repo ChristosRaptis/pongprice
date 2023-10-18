@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 import psycopg2
 import re
+import json
 
 
 class Scraper:
@@ -42,12 +43,13 @@ class Scraper:
         for sitemap_url in tqdm(
             sitemap_urls_list, desc="Getting product urls", total=len(sitemap_urls_list)
         ):
-            user_agent = fake_useragent.UserAgent().random
-            headers = {"User-Agent": user_agent}
-            response = requests.get(sitemap_url, headers=headers)
-            soup = bs(response.text, "xml")
-            urls = [url.text for url in soup.find_all("loc")]
-            product_urls.extend(urls)
+            try:
+                soup = self.get_soup(sitemap_url, "xml")
+                urls = [url.text for url in soup.find_all("loc")]
+                product_urls.extend(urls)
+            except:
+                print("error getting product urls")
+                pass    
         return product_urls
 
     def get_sitemaps(self, url, sitemap_condition):
@@ -98,22 +100,29 @@ class Scraper:
         )
         exists = cursor.fetchone()[0]
         if exists:
-            print("the product already exists, updating the price ...")
-            cursor.execute(
-                "UPDATE products SET product_price = %s WHERE url = %s;",
-                (product_data["product_price"], product_data["url"]),
-            )
+            try:
+                print("the product already exists, updating the price ...")
+                cursor.execute(
+                    "UPDATE products SET product_price = %s WHERE url = %s;",
+                    (product_data["product_price"], product_data["url"]),
+                )
+            except:
+                print("error updating the price")
+                pass    
         else:
-            print("the product does not exist, inserting the product data ...")
-            cursor.execute(
-                "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
-                (
-                    product_data["url"],
-                    product_data["product_name"],
-                    product_data["product_price"],
-                ),
-            )
-    
+            try:
+                print("the product does not exist, inserting the product data ...")
+                cursor.execute(
+                    "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
+                    (
+                        product_data["url"],
+                        product_data["product_name"],
+                        product_data["product_price"],
+                    ),
+                )
+            except:
+                print("error inserting the product data")
+                pass
     # Define a function to replace storage capacity values with the desired format
     def replace_capacity(self, match):
         if match.group(4):
@@ -133,48 +142,51 @@ class Scraper:
         """
         print(f"Scraping {product_url}")
         product_data = {}
-        soup = self.get_soup(product_url, "html.parser")
-
-        if "krefel" in product_url :
-            script = soup.find("script", type="application/json")
-            dict = json.loads(script.string)
-            try:
-                data = dict["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"][
-                    "data"
-                ]
-                product_data["url"] = product_url
-                product_data["product_name"] = data["manufacturer"] + " " + data["name"]
-                product_data["product_price"] = data["price"]["value"]
-            except:
-                print("error getting data")
-                pass
         
-        elif "mediamarkt" in product_url or "vandenborre" in product_url :
-            scripts = soup.find_all("script", type="application/ld+json")
-            for script in scripts:
-                data = json.loads(script.string)
-                if "offers" in data:
-                    # Process the data as needed
-                    try:
-                        pattern = r"(\d+)(G[Bo]|T[Bo])(?:/(\d+)(G[Bo]|T[Bo]))?"
-                        product_data["url"] = product_url
-                        product_data['product_name'] = re.sub(pattern, self.replace_capacity, data["name"])
-                        # product_data["product_name"] = data["name"]
-                        product_data["product_price"] = data["offers"]["price"]
-                    except:
-                        print("error getting data from vandenborre")
-                        pass
-                elif "object" in data :
-                    try:
-                        product_data["url"] = product_url
-                        product_data["product_name"] = data["object"]["name"]
-                        product_data["product_price"] = data["object"]["offers"]["price"]
-                    except:
-                        print("error getting data from mediamarkt")
-                        pass
-                else :
+        try:
+            soup = self.get_soup(product_url, "html.parser")
+            if "krefel" in product_url :
+                script = soup.find("script", type="application/json")
+                dict = json.loads(script.string)
+                try:
+                    data = dict["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"][
+                        "data"
+                    ]
+                    product_data["url"] = product_url
+                    product_data["product_name"] = data["manufacturer"] + " " + data["name"]
+                    product_data["product_price"] = data["price"]["value"]
+                except:
+                    print("error getting data")
                     pass
-        
+            
+            elif "mediamarkt" in product_url or "vandenborre" in product_url :
+                scripts = soup.find_all("script", type="application/ld+json")
+                for script in scripts:
+                    data = json.loads(script.string)
+                    if "offers" in data:
+                        # Process the data as needed
+                        try:
+                            pattern = r"(\d+)(G[Bo]|T[Bo])(?:/(\d+)(G[Bo]|T[Bo]))?"
+                            product_data["url"] = product_url
+                            product_data['product_name'] = re.sub(pattern, self.replace_capacity, data["name"])
+                            # product_data["product_name"] = data["name"]
+                            product_data["product_price"] = data["offers"]["price"]
+                        except:
+                            print("error getting data from vandenborre")
+                            pass
+                    elif "object" in data :
+                        try:
+                            product_data["url"] = product_url
+                            product_data["product_name"] = data["object"]["name"]
+                            product_data["product_price"] = data["object"]["offers"]["price"]
+                        except:
+                            print("error getting data from mediamarkt")
+                            pass
+                    else :
+                        pass
+        except:
+            print("error getting soup")
+            pass                
         # verifies if product_data not empty
         if bool(product_data):
             cur = conn.cursor()
