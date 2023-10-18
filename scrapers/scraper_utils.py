@@ -117,13 +117,13 @@ def update_database(product_data: dict) -> None:
     )
     exists = cursor.fetchone()[0]
     if exists:
-        print("the product already exists, updating the price ...")
+        
         cursor.execute(
             "UPDATE products SET product_price = %s WHERE url = %s;",
             (product_data["product_price"], product_data["url"]),
         )
     else:
-        print("the product does not exist, inserting the product data ...")
+        
         cursor.execute(
             "INSERT INTO products (url, product_name, product_price) VALUES (%s, %s, %s);",
             (
