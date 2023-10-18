@@ -12,13 +12,12 @@ import psycopg2
 
 class Scraper:
     
-    def __init__(self, site) -> None:
-        self.product_sitemaps = []
-        self.site = site
+    def __init__(self, url,sitemap_condition) -> None:
+        self.url = url
+        self.product_sitemaps = self.get_sitemaps(url, sitemap_condition)
 
     def get_soup(self, url: str, parser: str) -> bs:
         """Returns a BeautifulSoup object from a product url
-
         Args:
             product_url (str): product url
             parser (str): parser to use, 'html.parser' or 'xml'
@@ -34,13 +33,11 @@ class Scraper:
 
     def get_product_urls_from_xml(self, sitemap_urls_list: list) -> list:
         """Returns a list of product urls from a list of sitemap urls
-
         Args:
             sitemap_urls_list (list): list of sitemap urls
         Returns:
             list: list of product urls
         """
-
         product_urls = []
         for sitemap_url in tqdm(
             sitemap_urls_list, desc="Getting product urls", total=len(sitemap_urls_list)
@@ -53,9 +50,9 @@ class Scraper:
             product_urls.extend(urls)
         return product_urls
 
-    def get_sitemaps(self, main_sitemap_url, sitemap_condition):
+    def get_sitemaps(self, url, sitemap_condition):
         
-        main_sitemap_soup = self.get_soup(main_sitemap_url, "xml")
+        main_sitemap_soup = self.get_soup(url, "xml")
 
         # find sitemaps that contain 'smartphone' or 'laptop' in the url
         product_sitemaps = [
@@ -71,32 +68,8 @@ class Scraper:
         
         return all_product_sitemaps
 
-    def clean_price(number: str) -> float:
-        """Returns a float from a string containing a price
-
-        Args:
-            number (str): string containing a price
-        Returns:
-            float: price as a float
-
-        """
-        number = (
-            number.replace(" ", "")
-            .replace("\xa0", "")
-            .replace(".", "")
-            .replace("€", "")
-            .replace("\u202f", "")
-            .replace("–", "")
-            .replace(",", ".")
-            .rstrip("0")
-            .rstrip(",")
-            .rstrip("-")
-        )
-        return float(number)
-
     def get_db_connection(self):
         """Returns a connection to the postgreSQL database
-
         Returns:
             psycopg2.connection: connection to the database
         """
@@ -116,7 +89,6 @@ class Scraper:
     def update_database(self, product_data: dict, cursor) -> None:
         """Checks the database for the product url (unique key) of the product data, if it exists it updates the price,
         if not it inserts the product data
-
         Args:
             product_data (dict): dictionary containing the product url, name and price
             cursor: cursor to the database
@@ -170,24 +142,29 @@ class Scraper:
                 pass
         
         elif ("mediamarkt" or "vandenborre") in product_url :
-
-
-        
-        
-        scripts = soup.find_all("script", type="application/ld+json")
-    
-        for script in scripts:
-            data = json.loads(script.string)
-            if "offers" in data:
-                # Process the data as needed
-                try:
-                    product_data["url"] = product_url
-                    product_data["product_name"] = data["name"]
-                    product_data["product_price"] = data["offers"]["price"]
-                except:
-                    print("error getting data")
+            scripts = soup.find_all("script", type="application/ld+json")
+            for script in scripts:
+                data = json.loads(script.string)
+                if "offers" in data:
+                    # Process the data as needed
+                    try:
+                        product_data["url"] = product_url
+                        product_data["product_name"] = data["name"]
+                        product_data["product_price"] = data["offers"]["price"]
+                    except:
+                        print("error getting data from vandenborre")
+                        pass
+                elif "object" in data :
+                    try:
+                        product_data["url"] = product_url
+                        product_data["product_name"] = data["object"]["name"]
+                        product_data["product_price"] = data["object"]["offers"]["price"]
+                    except:
+                        print("error getting data from mediamarkt")
+                        pass
+                else :
                     pass
-
+        
         # verifies if product_data not empty
         if bool(product_data):
             cur = conn.cursor()
@@ -196,37 +173,43 @@ class Scraper:
             cur.close()
 
         return product_data
+
+if __name__ == "__main__":    
+
+    start_time = time.perf_counter()
+
+    url =
+    sitemap_condition =
+    scraper = Scraper(url, sitemap_condition)
     
-    def main(self):
-        start_time = time.perf_counter()
-        print(f"Found {len(self.product_sitemaps)} product urls")
+    print(f"Found {len(scraper.product_sitemaps)} product urls")
 
-        conn = self.get_db_connection()
+    conn = scraper.get_db_connection()
 
-        with ThreadPoolExecutor(max_workers=3) as executor:
-            product_list = list(
-                tqdm(
-                    executor.map(
-                        self.get_product_data, self.product_sitemaps, [conn] * len(self.product_sitemaps)
-                    ),
-                    total=len(self.product_sitemaps),
-                    desc="Scraping Vandenborre",
-                )
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        product_list = list(
+            tqdm(
+                executor.map(
+                    scraper.get_product_data, scraper.product_sitemaps, [conn] * len(scraper.product_sitemaps)
+                ),
+                total=len(scraper.product_sitemaps),
+                desc="Scraping Vandenborre",
             )
+        )
 
-        conn.close()
+    conn.close()
 
-        print(product_list)
-        print(f"Scraped {len(product_list)} products ")
-        end_time = time.perf_counter()
-        print(f"Finished in {round((end_time - start_time)/60, 2)} minutes")
+    print(product_list)
+    print(f"Scraped {len(product_list)} products ")
+    end_time = time.perf_counter()
+    print(f"Finished in {round((end_time - start_time)/60, 2)} minutes")
 
 
     
 
 
 
-sitemap_condition :
-krefel : "product"
-vandenborre : "productcatalog.xml"
-mediamarkt : "productdetailspages"
+# sitemap_condition :
+# krefel : "product"
+# vandenborre : "productcatalog.xml"
+# mediamarkt : "productdetailspages"
