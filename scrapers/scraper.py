@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup as bs
 from dotenv import load_dotenv
 import os
 import psycopg2
+import re
 
 
 class Scraper:
@@ -66,7 +67,7 @@ class Scraper:
         # quick way to delete duplicates
         all_product_sitemaps = list(set(all_product_sitemaps))
         
-        return all_product_sitemaps
+        return all_product_sitemaps[:100]
 
     def get_db_connection(self):
         """Returns a connection to the postgreSQL database
@@ -113,6 +114,13 @@ class Scraper:
                     product_data["product_price"],
                 ),
             )
+    
+    # Define a function to replace storage capacity values with the desired format
+    def replace_capacity(self, match):
+        if match.group(4):
+            return f"{match.group(1)} {match.group(2)} / {match.group(3)} {match.group(4)}"
+        else:
+            return f"{match.group(1)} {match.group(2)}"
 
     def get_product_data(self, product_url: str, conn):
         """
@@ -135,21 +143,24 @@ class Scraper:
                 data = dict["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"][
                     "data"
                 ]
+                product_data["url"] = product_url
                 product_data["product_name"] = data["manufacturer"] + " " + data["name"]
                 product_data["product_price"] = data["price"]["value"]
             except:
                 print("error getting data")
                 pass
         
-        elif ("mediamarkt" or "vandenborre") in product_url :
+        elif "mediamarkt" in product_url or "vandenborre" in product_url :
             scripts = soup.find_all("script", type="application/ld+json")
             for script in scripts:
                 data = json.loads(script.string)
                 if "offers" in data:
                     # Process the data as needed
                     try:
+                        pattern = r"(\d+)(G[Bo]|T[Bo])(?:/(\d+)(G[Bo]|T[Bo]))?"
                         product_data["url"] = product_url
-                        product_data["product_name"] = data["name"]
+                        product_data['product_name'] = re.sub(pattern, self.replace_capacity, data["name"])
+                        # product_data["product_name"] = data["name"]
                         product_data["product_price"] = data["offers"]["price"]
                     except:
                         print("error getting data from vandenborre")
@@ -174,39 +185,29 @@ class Scraper:
 
         return product_data
 
-if __name__ == "__main__":    
+    def run_scraper(self):
 
-    start_time = time.perf_counter()
+        start_time = time.perf_counter()     
+        print(f"Found {len(self.product_sitemaps)} product urls")
+        conn = self.get_db_connection()
 
-    url =
-    sitemap_condition =
-    scraper = Scraper(url, sitemap_condition)
-    
-    print(f"Found {len(scraper.product_sitemaps)} product urls")
-
-    conn = scraper.get_db_connection()
-
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        product_list = list(
-            tqdm(
-                executor.map(
-                    scraper.get_product_data, scraper.product_sitemaps, [conn] * len(scraper.product_sitemaps)
-                ),
-                total=len(scraper.product_sitemaps),
-                desc="Scraping Vandenborre",
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            product_list = list(
+                tqdm(
+                    pool.map(
+                        self.get_product_data, self.product_sitemaps, [conn] * len(self.product_sitemaps)
+                    ),
+                    total=len(self.product_sitemaps),
+                    desc= self.url.split(".")[1] ,
+                )
             )
-        )
 
-    conn.close()
+        conn.close()
 
-    print(product_list)
-    print(f"Scraped {len(product_list)} products ")
-    end_time = time.perf_counter()
-    print(f"Finished in {round((end_time - start_time)/60, 2)} minutes")
-
-
-    
-
+        print(product_list)
+        print(f"Scraped {len(product_list)} products ")
+        end_time = time.perf_counter()
+        print(f"Finished in {round((end_time - start_time)/60, 2)} minutes")
 
 
 # sitemap_condition :
