@@ -67,7 +67,7 @@ class Scraper:
         # quick way to delete duplicates
         all_product_sitemaps = list(set(all_product_sitemaps))
         
-        return all_product_sitemaps[:100]
+        return all_product_sitemaps
 
     def get_db_connection(self):
         """Returns a connection to the postgreSQL database
