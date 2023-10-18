@@ -14,10 +14,10 @@ This is a project made for training purposes and to display the skills of the co
 
 Our work is structured as follows : 
 
-*app.py* file is the script for the web interface of our tool (Flask but Streamlit was also used).
-*scrapers* folder : includes in scraper.py our class Scraper, and main.py the code to run it for three websites of our choice.
-*templates* folder : includes the html code that works with Flask and our script app.py in the main folder.
-*static* folder : includes the images for our webtool.
+- *app.py* file is the script for the web interface of our tool (Flask but Streamlit was also used).
+- *scrapers* folder : includes in scraper.py our class Scraper, and main.py the code to run it for three websites of our choice.
+- *templates* folder : includes the html code that works with Flask and our script app.py in the main folder.
+- *static* folder : includes the images for our webtool.
 
 ## Installation
 

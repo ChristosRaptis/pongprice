@@ -1,13 +1,11 @@
 {% for result in results %}
 <tr>
     {% if "vandenborre" in result.url %}
-    <td> <img src="https://www.vandenborre.be//WEBV3/assets/images/logos/logo_vdb_lg_FR.svg?v=1" width=200px height=200px > </td>
+    <td> <img src="{{url_for('static', filename='images/Vanden_Borre_logo.png')}}" width=200px height=200px > </td>
     {% elif "krefel" in result.url %}
-    <td> <img src="https://media.krefel.be/static/logo/krefel/logo_nl.svg" width=200px height=200px> </td>
-    {% elif "bol" in result.url %}
-    <td> <img src="https://purpuz.com/wp-content/uploads/2019/03/BOL-logo-1.jpg" width=100px height=100px> </td>
+    <td> <img src="{{url_for('static', filename='images/krefel-logo.png')}}" width=200px height=200px> </td>
     {% elif "mediamarkt" in result.url %}
-    <td> <img src="https://cms-images.mmst.eu/nzwrdbjwhn3t/6cwHfvZ5JSc52H8OL8adTp/45ee39fcbaf8642773e0c42ee2419c80/MediaMarkt-logo.png?q=80" width=300px height=300px> </td>
+    <td> <img src="{{url_for('static', filename='images/Media_Markt_logo.png')}}" width=300px height=300px> </td>
     {% endif %}
 
     <td><font size="+2">{{ result.product_name }}</font></td>
