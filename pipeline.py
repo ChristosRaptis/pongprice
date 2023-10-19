@@ -20,8 +20,15 @@ cur = conn.cursor()
 insert_query = """
 WITH Duplicates AS (
     SELECT product_name, ctid,
-    ROW_NUMBER() OVER (PARTITION BY REPLACE(REPLACE(product_name, 'GB', 'Go'), ' ', '') ORDER BY ctid) AS rnum
+    ROW_NUMBER() OVER (PARTITION BY
+        REPLACE(REPLACE(
+            CASE
+                WHEN product_name LIKE '%GB%' THEN 'Go'
+                WHEN product_name LIKE '%GO%' THEN 'Go'
+                ELSE product_name
+            END, 'inch', 'pouces'), ' ', '') ORDER BY ctid) AS rnum
     FROM products
+    WHERE url LIKE '%vandenborre%' -- Only apply the criteria to rows where URL includes 'vandenborre'
 )
 DELETE FROM products
 WHERE (product_name, ctid) IN (
